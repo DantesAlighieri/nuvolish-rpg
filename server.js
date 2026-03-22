@@ -181,7 +181,17 @@ app.post('/api/auth/register', needsDB, async (req, res) => {
   try {
     const { nome, email, senha } = req.body;
     if (!nome || !email || !senha) return res.status(400).json({ error: 'Preencha todos os campos' });
-    if (senha.length < 4) return res.status(400).json({ error: 'Senha precisa ter pelo menos 4 caracteres' });
+    
+    // Validar nome
+    if (nome.trim().length < 2) return res.status(400).json({ error: 'Nome precisa ter pelo menos 2 caracteres' });
+    
+    // Validar email
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!emailRegex.test(email)) return res.status(400).json({ error: 'Email inválido' });
+    
+    // Validar senha
+    if (senha.length < 8) return res.status(400).json({ error: 'Senha precisa ter pelo menos 8 caracteres' });
+    if (!/[A-Za-z]/.test(senha) || !/[0-9]/.test(senha)) return res.status(400).json({ error: 'Senha precisa ter letras e números' });
 
     // Checar se email já existe
     const [existing] = await db.query('SELECT id FROM usuarios WHERE email = ?', [email.toLowerCase()]);
@@ -190,9 +200,9 @@ app.post('/api/auth/register', needsDB, async (req, res) => {
     const hash = hashSenha(senha);
     const [result] = await db.query(
       'INSERT INTO usuarios (nome, email, senha) VALUES (?, ?, ?)',
-      [nome, email.toLowerCase(), hash]
+      [nome.trim(), email.toLowerCase(), hash]
     );
-    res.json({ id: result.insertId, nome, email: email.toLowerCase() });
+    res.json({ id: result.insertId, nome: nome.trim(), email: email.toLowerCase() });
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
