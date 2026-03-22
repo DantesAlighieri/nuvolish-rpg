@@ -40,15 +40,17 @@ const App = (() => {
       modal.open('Criar Conta', `
         <div class="form-group">
           <label>Nome</label>
-          <input type="text" id="auth-nome" placeholder="Seu nome">
+          <input type="text" id="auth-nome" placeholder="Seu nome (min. 2 caracteres)" minlength="2">
         </div>
         <div class="form-group">
           <label>Email</label>
-          <input type="email" id="auth-email" placeholder="seu@email.com">
+          <input type="email" id="auth-email" placeholder="seu@gmail.com" autocomplete="email">
+          <span style="font-size:11px;color:var(--text-dim);margin-top:4px;display:block">Use um email válido (ex: nome@gmail.com)</span>
         </div>
         <div class="form-group">
           <label>Senha</label>
-          <input type="password" id="auth-senha" placeholder="Mínimo 4 caracteres">
+          <input type="password" id="auth-senha" placeholder="Mínimo 8 caracteres" minlength="8">
+          <span style="font-size:11px;color:var(--text-dim);margin-top:4px;display:block">Mínimo 8 caracteres, com letras e números</span>
         </div>
         <p style="font-size:13px;color:var(--text-dim);margin-top:8px">Já tem conta? <a href="#" onclick="App.auth.showLogin();return false" style="color:var(--gold);text-decoration:underline">Entrar</a></p>
       `, `
@@ -88,7 +90,18 @@ const App = (() => {
       const nome = document.getElementById('auth-nome').value.trim();
       const email = document.getElementById('auth-email').value.trim();
       const senha = document.getElementById('auth-senha').value;
+      
+      // Validações
       if (!nome || !email || !senha) return toast('Preencha todos os campos!', 'error');
+      if (nome.length < 2) return toast('Nome precisa ter pelo menos 2 caracteres', 'error');
+      
+      // Validar email completo
+      const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+      if (!emailRegex.test(email)) return toast('Digite um email válido! Ex: nome@gmail.com', 'error');
+      
+      // Validar senha
+      if (senha.length < 8) return toast('Senha precisa ter pelo menos 8 caracteres', 'error');
+      if (!/[A-Za-z]/.test(senha) || !/[0-9]/.test(senha)) return toast('Senha precisa ter letras e números', 'error');
 
       try {
         const r = await fetch('/api/auth/register', {
@@ -802,13 +815,13 @@ const App = (() => {
         <div class="form-row">
           <div class="form-group">
             <label>Raça</label>
-            <select id="nf-raca">
-              <option value="">Selecione...</option>
-              <option value="Nuvolian">Nuvolian</option>
-              <option value="Eldryd da Floresta">Eldryd da Floresta</option>
-              <option value="Eldryd do Caos">Eldryd do Caos</option>
-              <option value="Kragnir">Kragnir</option>
-            </select>
+            <input type="text" id="nf-raca" placeholder="Ex: Nuvolian, Eldryd..." list="racas-modal">
+            <datalist id="racas-modal">
+              <option value="Nuvolian">
+              <option value="Eldryd da Floresta">
+              <option value="Eldryd do Caos">
+              <option value="Kragnir">
+            </datalist>
           </div>
           <div class="form-group">
             <label>Classe</label>
@@ -923,8 +936,12 @@ const App = (() => {
       // Inventário
       this.renderInventario(data);
 
-      // Notas
-      document.getElementById('f-notas').value = data.notas || '';
+      // Traits & Condições
+      document.getElementById('f-traits').value = data.notas ? (data.notas.split('|||TRAITS|||')[1]?.split('|||COND|||')[0] || '') : '';
+      document.getElementById('f-condicoes').value = data.notas ? (data.notas.split('|||COND|||')[1] || '') : '';
+
+      // Notas (parte antes dos separadores)
+      document.getElementById('f-notas').value = data.notas ? data.notas.split('|||TRAITS|||')[0] : '';
     },
 
     renderAttributes(data) {
@@ -1083,11 +1100,18 @@ const App = (() => {
     },
 
     onRaceChange() {
-      const raca = document.getElementById('f-raca').value;
+      const raca = document.getElementById('f-raca').value.trim();
       document.getElementById('fichaRaceTag').textContent = raca || '—';
       const sheet = document.getElementById('fichaSheet');
       Object.values(RACE_THEMES).forEach(t => sheet.classList.remove(t));
-      if (raca && RACE_THEMES[raca]) sheet.classList.add(RACE_THEMES[raca]);
+      // Aplicar tema se bater com raça conhecida (busca parcial)
+      if (raca) {
+        const racaLower = raca.toLowerCase();
+        if (racaLower.includes('nuvolian')) sheet.classList.add(RACE_THEMES['Nuvolian']);
+        else if (racaLower.includes('floresta') || racaLower.includes('eldryd da f')) sheet.classList.add(RACE_THEMES['Eldryd da Floresta']);
+        else if (racaLower.includes('caos') || racaLower.includes('eldryd do c')) sheet.classList.add(RACE_THEMES['Eldryd do Caos']);
+        else if (racaLower.includes('kragnir')) sheet.classList.add(RACE_THEMES['Kragnir']);
+      }
     },
 
     renderPericias(data) {
@@ -1265,7 +1289,7 @@ const App = (() => {
         moeda_ouro: parseInt(document.getElementById('f-moeda-ouro').value) || 0,
         moeda_platina: parseInt(document.getElementById('f-moeda-platina').value) || 0,
         afinidade_magica: currentFichaData?.afinidade_magica || false,
-        notas: document.getElementById('f-notas').value
+        notas: document.getElementById('f-notas').value + '|||TRAITS|||' + document.getElementById('f-traits').value + '|||COND|||' + document.getElementById('f-condicoes').value
       };
 
       // Atributos
