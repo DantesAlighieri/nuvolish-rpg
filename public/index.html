@@ -300,13 +300,13 @@
           <div class="form-row">
             <div class="form-group">
               <label>Raça</label>
-              <select id="f-raca" onchange="App.fichas.onRaceChange()">
-                <option value="">Selecione...</option>
-                <option value="Nuvolian">Nuvolian</option>
-                <option value="Eldryd da Floresta">Eldryd da Floresta</option>
-                <option value="Eldryd do Caos">Eldryd do Caos</option>
-                <option value="Kragnir">Kragnir</option>
-              </select>
+              <input type="text" id="f-raca" placeholder="Ex: Nuvolian, Eldryd, Kragnir..." onchange="App.fichas.onRaceChange()" list="racas-list">
+              <datalist id="racas-list">
+                <option value="Nuvolian">
+                <option value="Eldryd da Floresta">
+                <option value="Eldryd do Caos">
+                <option value="Kragnir">
+              </datalist>
             </div>
             <div class="form-group">
               <label>Nível</label>
@@ -479,6 +479,26 @@
             <tbody id="inventarioBody">
             </tbody>
           </table>
+        </div>
+
+        <!-- BUFFS / TRAÇOS DA RAÇA -->
+        <div class="card sheet-full">
+          <div class="card-header">
+            <span class="card-title">✦ Traços & Buffs</span>
+            <span class="card-meta">Habilidades raciais, buffs, debuffs</span>
+          </div>
+          <textarea id="f-traits" rows="4" placeholder="Ex: Visão no Escuro (Kragnir), Conexão Natural +2 (Eldryd), Resistência ao Yvero (Nuvolian)..." 
+                    style="width:100%;background:var(--bg-input);border:1px solid var(--border);border-radius:var(--radius);padding:12px;color:var(--text);font-family:var(--font-body);font-size:15px;resize:vertical"></textarea>
+        </div>
+
+        <!-- CONDIÇÕES ATIVAS -->
+        <div class="card sheet-full">
+          <div class="card-header">
+            <span class="card-title">⚡ Condições Ativas</span>
+            <span class="card-meta">Buffs temporários, maldições, efeitos</span>
+          </div>
+          <textarea id="f-condicoes" rows="3" placeholder="Ex: Envenenado (2 turnos), Bênção da Floresta (+1 ATK), Maldição dos Poços (-2 SAB)..." 
+                    style="width:100%;background:var(--bg-input);border:1px solid var(--border);border-radius:var(--radius);padding:12px;color:var(--text);font-family:var(--font-body);font-size:15px;resize:vertical"></textarea>
         </div>
 
         <!-- NOTAS -->
