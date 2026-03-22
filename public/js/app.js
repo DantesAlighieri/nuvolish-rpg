@@ -12,7 +12,139 @@ const App = (() => {
   let currentFichaData = null;
   let diceHistory = [];
   let isMaster = false;
-  let playerName = localStorage.getItem('nuvolish_playerName') || '';
+  let currentUser = JSON.parse(localStorage.getItem('nuvolish_user') || 'null');
+  let playerName = currentUser ? currentUser.nome : '';
+
+  // ══════════════════════════════════════
+  // AUTH (Login / Registro)
+  // ══════════════════════════════════════
+  const auth = {
+    showLogin() {
+      modal.open('Entrar', `
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" id="auth-email" placeholder="seu@email.com">
+        </div>
+        <div class="form-group">
+          <label>Senha</label>
+          <input type="password" id="auth-senha" placeholder="Sua senha">
+        </div>
+        <p style="font-size:13px;color:var(--text-dim);margin-top:8px">Não tem conta? <a href="#" onclick="App.auth.showRegister();return false" style="color:var(--gold);text-decoration:underline">Criar conta</a></p>
+      `, `
+        <button class="btn btn-outline" onclick="App.modal.close()">Cancelar</button>
+        <button class="btn btn-gold" onclick="App.auth.login()">Entrar</button>
+      `);
+    },
+
+    showRegister() {
+      modal.open('Criar Conta', `
+        <div class="form-group">
+          <label>Nome</label>
+          <input type="text" id="auth-nome" placeholder="Seu nome">
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" id="auth-email" placeholder="seu@email.com">
+        </div>
+        <div class="form-group">
+          <label>Senha</label>
+          <input type="password" id="auth-senha" placeholder="Mínimo 4 caracteres">
+        </div>
+        <p style="font-size:13px;color:var(--text-dim);margin-top:8px">Já tem conta? <a href="#" onclick="App.auth.showLogin();return false" style="color:var(--gold);text-decoration:underline">Entrar</a></p>
+      `, `
+        <button class="btn btn-outline" onclick="App.modal.close()">Cancelar</button>
+        <button class="btn btn-gold" onclick="App.auth.register()">Criar Conta</button>
+      `);
+    },
+
+    async login() {
+      const email = document.getElementById('auth-email').value.trim();
+      const senha = document.getElementById('auth-senha').value;
+      if (!email || !senha) return toast('Preencha email e senha!', 'error');
+
+      try {
+        const r = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, senha })
+        });
+        const data = await r.json();
+        if (r.ok) {
+          currentUser = data;
+          playerName = data.nome;
+          localStorage.setItem('nuvolish_user', JSON.stringify(data));
+          modal.close();
+          toast('Bem-vindo, ' + data.nome + '!', 'success');
+          this.updateUI();
+        } else {
+          toast(data.error || 'Erro no login', 'error');
+        }
+      } catch {
+        toast('Erro de conexão', 'error');
+      }
+    },
+
+    async register() {
+      const nome = document.getElementById('auth-nome').value.trim();
+      const email = document.getElementById('auth-email').value.trim();
+      const senha = document.getElementById('auth-senha').value;
+      if (!nome || !email || !senha) return toast('Preencha todos os campos!', 'error');
+
+      try {
+        const r = await fetch('/api/auth/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ nome, email, senha })
+        });
+        const data = await r.json();
+        if (r.ok) {
+          currentUser = data;
+          playerName = data.nome;
+          localStorage.setItem('nuvolish_user', JSON.stringify(data));
+          modal.close();
+          toast('Conta criada! Bem-vindo, ' + data.nome + '!', 'success');
+          this.updateUI();
+        } else {
+          toast(data.error || 'Erro ao criar conta', 'error');
+        }
+      } catch {
+        toast('Erro de conexão', 'error');
+      }
+    },
+
+    logout() {
+      currentUser = null;
+      playerName = '';
+      localStorage.removeItem('nuvolish_user');
+      toast('Deslogado!', 'info');
+      this.updateUI();
+      navigate('hero');
+    },
+
+    updateUI() {
+      const authArea = document.getElementById('navAuth');
+      if (currentUser) {
+        authArea.innerHTML = `
+          <span style="font-family:var(--font-mono);font-size:11px;color:var(--gold)">${esc(currentUser.nome)}</span>
+          <a style="font-family:var(--font-mono);font-size:10px;color:var(--text-dim);cursor:pointer;text-decoration:underline" onclick="App.auth.logout()">Sair</a>
+        `;
+      } else {
+        authArea.innerHTML = `
+          <a class="btn btn-sm btn-outline" style="font-size:10px;padding:6px 12px" onclick="App.auth.showLogin()">Entrar</a>
+          <a class="btn btn-sm btn-gold" style="font-size:10px;padding:6px 12px" onclick="App.auth.showRegister()">Criar Conta</a>
+        `;
+      }
+    },
+
+    requireLogin(callback) {
+      if (!currentUser) {
+        toast('Faça login primeiro!', 'warning');
+        this.showLogin();
+        return false;
+      }
+      return true;
+    }
+  };
 
   // ══════════════════════════════════════
   // CONSTANTES DO SISTEMA NUVOLISH
@@ -422,14 +554,15 @@ const App = (() => {
     },
 
     openCreate() {
+      if (!auth.requireLogin()) return;
       modal.open('Nova Mesa', `
         <div class="form-group">
           <label>Nome da Mesa</label>
           <input type="text" id="m-nome" placeholder="Ex: A Queda de Hystéria">
         </div>
         <div class="form-group">
-          <label>Nome do Mestre</label>
-          <input type="text" id="m-mestre" placeholder="Seu nome">
+          <label>Mestre</label>
+          <input type="text" id="m-mestre" value="${esc(currentUser.nome)}" readonly style="opacity:0.7">
         </div>
         <div class="form-group">
           <label>Descrição</label>
@@ -442,15 +575,13 @@ const App = (() => {
     },
 
     async create() {
+      if (!auth.requireLogin()) return;
       const nome = document.getElementById('m-nome').value.trim();
-      const mestre = document.getElementById('m-mestre').value.trim();
+      const mestre = currentUser.nome;
       const descricao = document.getElementById('m-desc').value.trim();
-      if (!nome || !mestre) return toast('Preencha nome e mestre!', 'error');
-      // Salvar nome do mestre pra identificar depois
-      playerName = mestre;
-      localStorage.setItem('nuvolish_playerName', mestre);
+      if (!nome) return toast('Preencha o nome da mesa!', 'error');
       const codigo = Math.random().toString(36).substring(2, 8).toUpperCase();
-      await api.createMesa({ nome, codigo, mestre, descricao });
+      await api.createMesa({ nome, codigo, mestre, mestre_id: currentUser.id, descricao });
       modal.close();
       toast('Mesa criada! Código: ' + codigo, 'success');
       this.load();
@@ -462,8 +593,8 @@ const App = (() => {
       if (!mesa) return toast('Mesa não encontrada', 'error');
       currentMesa = mesa;
 
-      // Detectar se é mestre (quem criou a mesa)
-      isMaster = (playerName && mesa.mestre === playerName);
+      // Detectar se é mestre (por ID do usuário ou por nome como fallback)
+      isMaster = currentUser && (mesa.mestre_id == currentUser.id || mesa.mestre === currentUser.nome);
       const activeEl = document.getElementById('mesaActive');
       activeEl.classList.toggle('is-master', isMaster);
 
@@ -485,30 +616,9 @@ const App = (() => {
     },
 
     join() {
+      if (!auth.requireLogin()) return;
       const code = document.getElementById('mesaJoinCode').value.trim().toUpperCase();
       if (!code) return toast('Digite um código!', 'error');
-
-      // Se não tem nome salvo, perguntar
-      if (!playerName) {
-        modal.open('Seu Nome', `
-          <div class="form-group">
-            <label>Como você quer ser chamado?</label>
-            <input type="text" id="join-name" placeholder="Seu nome">
-          </div>
-        `, `
-          <button class="btn btn-outline" onclick="App.modal.close()">Cancelar</button>
-          <button class="btn btn-gold" onclick="
-            const n = document.getElementById('join-name').value.trim();
-            if (!n) { App.toast('Digite seu nome!', 'error'); return; }
-            localStorage.setItem('nuvolish_playerName', n);
-            App.modal.close();
-            document.getElementById('mesaJoinCode').value = '${code}';
-            App.mesas.join();
-          ">Entrar</button>
-        `);
-        playerName = localStorage.getItem('nuvolish_playerName') || '';
-        if (!playerName) return;
-      }
 
       api.getMesas().then(data => {
         const mesa = data.find(m => m.codigo === code);
@@ -552,6 +662,10 @@ const App = (() => {
           <div class="card-grid">${players.length ? players.map(p => this.renderFichaCard(p)).join('') : '<div class="empty-state"><p>Nenhum jogador na mesa</p></div>'}</div>
         `;
       } else if (tab === 'monstros') {
+        if (!isMaster) {
+          content.innerHTML = '<div class="empty-state"><div class="empty-state-icon">🔒</div><p>Apenas o Mestre pode ver os monstros da mesa</p></div>';
+          return;
+        }
         const monsters = await api.getFichas({ mesa_id: currentMesa.id, tipo: 'monstro' });
         content.innerHTML = `
           <button class="btn btn-sm btn-outline" onclick="App.mesas.addFichaToMesa('monstro')" style="margin-bottom:16px">+ Adicionar Monstro</button>
@@ -559,15 +673,18 @@ const App = (() => {
         `;
       } else if (tab === 'combate') {
         const allFichas = await api.getFichas({ mesa_id: currentMesa.id });
+        // Jogador só vê PCs no combate, Mestre vê tudo
+        const fichasVisiveis = isMaster ? allFichas : allFichas.filter(f => f.tipo === 'player');
         content.innerHTML = `
           <div class="card sheet-full" style="margin-bottom:20px">
             <div class="card-header"><span class="card-title">Ordem de Iniciativa</span>
-              <button class="btn btn-sm btn-gold" onclick="App.mesas.rollInitiative()">🎲 Rolar Iniciativa</button>
+              ${isMaster ? '<button class="btn btn-sm btn-gold" onclick="App.mesas.rollInitiative()">🎲 Rolar Iniciativa</button>' : '<span class="tag">Aguardando o Mestre...</span>'}
             </div>
-            <div id="initiativeList">${allFichas.map(f => `
+            <div id="initiativeList">${fichasVisiveis.map(f => `
               <div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--border)">
                 <span class="tag ${f.tipo === 'monstro' ? 'tag-red' : 'tag-gold'}">${f.tipo === 'monstro' ? 'MON' : 'PC'}</span>
                 <span style="flex:1;font-family:var(--font-display);font-size:15px">${esc(f.nome)}</span>
+                ${isMaster ? `<span style="font-family:var(--font-mono);font-size:11px;color:var(--text-dim)">HP ${f.hp_atual||0}/${f.hp_max||0}</span>` : ''}
                 <span class="initiative-val" data-ficha="${f.id}" data-agi="${f.agilidade || 10}" style="font-family:var(--font-mono);font-size:18px;color:var(--gold);min-width:30px;text-align:center">—</span>
               </div>
             `).join('')}</div>
@@ -576,7 +693,7 @@ const App = (() => {
       } else if (tab === 'diario') {
         const sessoes = await api.getSessoes(currentMesa.id);
         content.innerHTML = `
-          <button class="btn btn-sm btn-gold" onclick="App.sessoes.openCreateForMesa(${currentMesa.id})" style="margin-bottom:16px">+ Nova Sessão</button>
+          ${isMaster ? `<button class="btn btn-sm btn-gold" onclick="App.sessoes.openCreateForMesa(${currentMesa.id})" style="margin-bottom:16px">+ Nova Sessão</button>` : ''}
           ${sessoes.length ? sessoes.map(s => `
             <div class="card" style="margin-bottom:12px;cursor:pointer" onclick="App.sessoes.viewDiario(${s.id}, '${esc(s.titulo || 'Sessão ' + s.numero)}')">
               <div class="card-header">
@@ -871,7 +988,13 @@ const App = (() => {
           const est = getSanidadeEstagio(i);
           pip.classList.add(est.css);
         }
-        pip.onclick = () => this.setSanidade(i);
+        // Só mestre pode alterar sanidade (ou se não tiver mesa = edição solo)
+        if (isMaster || !currentMesa) {
+          pip.onclick = () => this.setSanidade(i);
+          pip.style.cursor = 'pointer';
+        } else {
+          pip.style.cursor = 'default';
+        }
         track.appendChild(pip);
       }
       const est = getSanidadeEstagio(val);
@@ -886,6 +1009,8 @@ const App = (() => {
     },
 
     setYvero(fase) {
+      // Só mestre pode alterar yvero (ou edição solo)
+      if (currentMesa && !isMaster) return;
       if (currentFichaData) currentFichaData.yvero_fase = fase;
       document.querySelectorAll('.yvero-phase').forEach(el => {
         el.classList.toggle('active', parseInt(el.dataset.fase) <= fase);
@@ -1562,6 +1687,9 @@ const App = (() => {
     // Map
     initMap();
 
+    // Auth UI
+    auth.updateUI();
+
     // Hidden class
     const style = document.createElement('style');
     style.textContent = '.hidden { display: none !important; }';
@@ -1574,6 +1702,7 @@ const App = (() => {
   // ── API pública ──
   return {
     navigate,
+    auth,
     mesas,
     fichas,
     bestiario,
