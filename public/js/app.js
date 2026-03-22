@@ -11,6 +11,8 @@ const App = (() => {
   let currentFicha = null;
   let currentFichaData = null;
   let diceHistory = [];
+  let isMaster = false;
+  let playerName = localStorage.getItem('nuvolish_playerName') || '';
 
   // ══════════════════════════════════════
   // CONSTANTES DO SISTEMA NUVOLISH
@@ -444,6 +446,9 @@ const App = (() => {
       const mestre = document.getElementById('m-mestre').value.trim();
       const descricao = document.getElementById('m-desc').value.trim();
       if (!nome || !mestre) return toast('Preencha nome e mestre!', 'error');
+      // Salvar nome do mestre pra identificar depois
+      playerName = mestre;
+      localStorage.setItem('nuvolish_playerName', mestre);
       const codigo = Math.random().toString(36).substring(2, 8).toUpperCase();
       await api.createMesa({ nome, codigo, mestre, descricao });
       modal.close();
@@ -456,8 +461,24 @@ const App = (() => {
       const mesa = data.find(m => m.id == id);
       if (!mesa) return toast('Mesa não encontrada', 'error');
       currentMesa = mesa;
+
+      // Detectar se é mestre (quem criou a mesa)
+      isMaster = (playerName && mesa.mestre === playerName);
+      const activeEl = document.getElementById('mesaActive');
+      activeEl.classList.toggle('is-master', isMaster);
+
+      // Badge de role
+      const badge = document.getElementById('mesaRoleBadge');
+      if (isMaster) {
+        badge.textContent = '👑 Mestre';
+        badge.className = 'master-badge';
+      } else {
+        badge.textContent = '⚔ Jogador';
+        badge.className = 'player-badge';
+      }
+
       document.getElementById('mesasList').style.display = 'none';
-      document.getElementById('mesaActive').style.display = 'block';
+      activeEl.style.display = 'block';
       document.getElementById('mesaActiveName').textContent = mesa.nome;
       document.getElementById('mesaActiveCode').textContent = mesa.codigo;
       this.loadTab('jogadores');
@@ -466,6 +487,29 @@ const App = (() => {
     join() {
       const code = document.getElementById('mesaJoinCode').value.trim().toUpperCase();
       if (!code) return toast('Digite um código!', 'error');
+
+      // Se não tem nome salvo, perguntar
+      if (!playerName) {
+        modal.open('Seu Nome', `
+          <div class="form-group">
+            <label>Como você quer ser chamado?</label>
+            <input type="text" id="join-name" placeholder="Seu nome">
+          </div>
+        `, `
+          <button class="btn btn-outline" onclick="App.modal.close()">Cancelar</button>
+          <button class="btn btn-gold" onclick="
+            const n = document.getElementById('join-name').value.trim();
+            if (!n) { App.toast('Digite seu nome!', 'error'); return; }
+            localStorage.setItem('nuvolish_playerName', n);
+            App.modal.close();
+            document.getElementById('mesaJoinCode').value = '${code}';
+            App.mesas.join();
+          ">Entrar</button>
+        `);
+        playerName = localStorage.getItem('nuvolish_playerName') || '';
+        if (!playerName) return;
+      }
+
       api.getMesas().then(data => {
         const mesa = data.find(m => m.codigo === code);
         if (mesa) {
