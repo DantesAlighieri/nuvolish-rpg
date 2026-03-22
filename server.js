@@ -69,10 +69,18 @@ async function createTables() {
   if (!db) return;
 
   const queries = [
+    `CREATE TABLE IF NOT EXISTS usuarios (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      nome VARCHAR(100) NOT NULL,
+      email VARCHAR(200) NOT NULL UNIQUE,
+      senha VARCHAR(255) NOT NULL,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )`,
     `CREATE TABLE IF NOT EXISTS mesas (
       id INT AUTO_INCREMENT PRIMARY KEY,
       nome VARCHAR(100) NOT NULL,
       codigo VARCHAR(10) NOT NULL UNIQUE,
+      mestre_id INT,
       mestre VARCHAR(100) NOT NULL,
       descricao TEXT,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -161,6 +169,57 @@ const needsDB = (req, res, next) => {
 };
 
 // ══════════════════════════════════════
+// AUTH (Registro / Login)
+// ══════════════════════════════════════
+const crypto = require('crypto');
+
+function hashSenha(senha) {
+  return crypto.createHash('sha256').update(senha).digest('hex');
+}
+
+app.post('/api/auth/register', needsDB, async (req, res) => {
+  try {
+    const { nome, email, senha } = req.body;
+    if (!nome || !email || !senha) return res.status(400).json({ error: 'Preencha todos os campos' });
+    if (senha.length < 4) return res.status(400).json({ error: 'Senha precisa ter pelo menos 4 caracteres' });
+
+    // Checar se email já existe
+    const [existing] = await db.query('SELECT id FROM usuarios WHERE email = ?', [email.toLowerCase()]);
+    if (existing.length) return res.status(409).json({ error: 'Email já cadastrado' });
+
+    const hash = hashSenha(senha);
+    const [result] = await db.query(
+      'INSERT INTO usuarios (nome, email, senha) VALUES (?, ?, ?)',
+      [nome, email.toLowerCase(), hash]
+    );
+    res.json({ id: result.insertId, nome, email: email.toLowerCase() });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+app.post('/api/auth/login', needsDB, async (req, res) => {
+  try {
+    const { email, senha } = req.body;
+    if (!email || !senha) return res.status(400).json({ error: 'Preencha email e senha' });
+
+    const hash = hashSenha(senha);
+    const [rows] = await db.query(
+      'SELECT id, nome, email FROM usuarios WHERE email = ? AND senha = ?',
+      [email.toLowerCase(), hash]
+    );
+    if (!rows.length) return res.status(401).json({ error: 'Email ou senha incorretos' });
+    res.json(rows[0]);
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+app.get('/api/auth/user/:id', needsDB, async (req, res) => {
+  try {
+    const [rows] = await db.query('SELECT id, nome, email FROM usuarios WHERE id = ?', [req.params.id]);
+    if (!rows.length) return res.status(404).json({ error: 'Usuário não encontrado' });
+    res.json(rows[0]);
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// ══════════════════════════════════════
 // MESAS
 // ══════════════════════════════════════
 app.get('/api/mesas', needsDB, async (req, res) => {
@@ -180,12 +239,12 @@ app.get('/api/mesas/:id', needsDB, async (req, res) => {
 
 app.post('/api/mesas', needsDB, async (req, res) => {
   try {
-    const { nome, codigo, mestre, descricao } = req.body;
+    const { nome, codigo, mestre, mestre_id, descricao } = req.body;
     const [result] = await db.query(
-      'INSERT INTO mesas (nome, codigo, mestre, descricao) VALUES (?, ?, ?, ?)',
-      [nome, codigo, mestre, descricao || '']
+      'INSERT INTO mesas (nome, codigo, mestre, mestre_id, descricao) VALUES (?, ?, ?, ?, ?)',
+      [nome, codigo, mestre, mestre_id || null, descricao || '']
     );
-    res.json({ id: result.insertId, nome, codigo, mestre, descricao });
+    res.json({ id: result.insertId, nome, codigo, mestre, mestre_id, descricao });
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
