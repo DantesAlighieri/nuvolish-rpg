@@ -157,12 +157,15 @@
     <div id="mesaActive" style="display:none">
       <div class="mesa-header">
         <div>
-          <h3 id="mesaActiveName" style="font-family:var(--font-display);font-size:24px;color:var(--gold)"></h3>
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:4px">
+            <h3 id="mesaActiveName" style="font-family:var(--font-display);font-size:24px;color:var(--gold)"></h3>
+            <span id="mesaRoleBadge" class="master-badge">Mestre</span>
+          </div>
           <span class="mesa-code" id="mesaActiveCode" onclick="App.mesas.copyCode()" title="Clique para copiar"></span>
         </div>
-        <div style="display:flex;gap:8px">
+        <div style="display:flex;gap:8px;align-items:center">
           <button class="btn btn-sm btn-outline" onclick="App.mesas.back()">← Voltar</button>
-          <button class="btn btn-sm btn-danger" onclick="App.mesas.deleteCurrent()">Excluir</button>
+          <button class="btn btn-sm btn-danger master-only" id="btnDeleteMesa" onclick="App.mesas.deleteCurrent()">Excluir</button>
         </div>
       </div>
 
