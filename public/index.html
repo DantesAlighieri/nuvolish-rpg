@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nuvolish RPG — Sistema do Tephero</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚔️</text></svg>">
+</head>
+<body>
+
+  <!-- ══════ NAVIGATION ══════ -->
+  <nav class="nav" id="navbar">
+    <a class="nav-brand" data-nav="hero">NUVOLISH <span>RPG</span></a>
+    <button class="nav-toggle" id="navToggle">☰</button>
+    <ul class="nav-links" id="navLinks">
+      <li><a data-nav="hero">Início</a></li>
+      <li><a data-nav="lore">Lore</a></li>
+      <li><a data-nav="mapa">Mapa</a></li>
+      <li><a data-nav="mesas">Mesas</a></li>
+      <li><a data-nav="fichas">Fichas</a></li>
+      <li><a data-nav="bestiario">Bestiário</a></li>
+      <li><a data-nav="sessoes">Sessões</a></li>
+    </ul>
+    <div class="nav-status">
+      <div class="dot" id="dbDot"></div>
+      <span id="dbStatus">Verificando...</span>
+    </div>
+  </nav>
+
+  <!-- ══════ HERO ══════ -->
+  <section class="section active" id="sec-hero">
+    <div class="hero">
+      <div class="hero-badge">⚔️ Sistema de RPG do Tephero</div>
+      <h1>Nuvolish</h1>
+      <h2>Cidades Flutuantes de Hystéria · Energias Ancestrais · Contaminação Yvero</h2>
+      <div class="hero-actions">
+        <button class="btn btn-gold" data-nav="mesas">⚔ Entrar numa Mesa</button>
+        <button class="btn btn-outline" data-nav="fichas">📋 Criar Ficha</button>
+        <button class="btn btn-outline" data-nav="lore">📖 Explorar Lore</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════ LORE ══════ -->
+  <section class="section" id="sec-lore">
+    <h2 class="section-title">Lore de Nuvolish</h2>
+    <p class="section-subtitle">A história real de Core, Lilin e das Cidades Flutuantes de Hystéria</p>
+    <div class="section-divider"></div>
+
+    <div class="lore-block">
+      <h3>🌍 O Mundo de Core</h3>
+      <p>Core é o mundo primordial — um plano vasto e antigo onde a magia emana da própria terra. Antes da ascensão das raças mortais, Core era governado por forças elementais puras que moldavam montanhas, oceanos e florestas com vontade própria. A energia que permeia tudo em Core se manifesta de três formas fundamentais: <span class="accent">Aura</span>, a força vital e carismática de cada ser; <span class="accent">Mana</span>, a energia arcana que alimenta feitiçarias; e <span class="accent">Prana</span>, o sopro vital conectado ao corpo físico.</p>
+      <p>Nas profundezas de Core existem os <span class="accent">Poços de Maldição</span> — fissuras na realidade onde a energia corrompida do Yvero vaza para o mundo material. Aqueles que se aproximam demais começam a sentir o cansaço inexplicável, o primeiro sinal da Contaminação.</p>
+    </div>
+
+    <div class="lore-block">
+      <h3>🏙️ As Cidades Flutuantes de Hystéria</h3>
+      <p>Hystéria é o nome coletivo para as cidades que flutuam nos céus de Core, mantidas no ar por antigos mecanismos de Aura cristalizada. Cada cidade é uma fortaleza aérea com cultura e leis próprias. Os <span class="accent">Nuvolians</span> — a raça nativa das nuvens — construíram Hystéria como refúgio contra a crescente Contaminação Yvero que corroía as terras abaixo.</p>
+      <p>As cidades são conectadas por pontes de luz e rotas de vento controladas por navegadores Nuvolians. O comércio entre as cidades usa o sistema de moedas padrão: cobre (Pc), prata (Pp), ouro (Po) e a rara platina (Pl).</p>
+    </div>
+
+    <div class="lore-block">
+      <h3>🌿 Lilin e a Floresta Primordial</h3>
+      <p>Lilin é a grande floresta viva que cobre boa parte da superfície de Core. Dentro dela vivem os <span class="accent">Eldryds da Floresta</span> — seres de pele verde-musgo que se comunicam com as árvores ancestrais. Mas Lilin guarda um segredo sombrio: no coração da floresta, onde a luz não chega, habitam os <span class="accent">Eldryds do Caos</span> — uma linhagem corrompida que abraçou o Yvero e transformou sua conexão com a natureza em algo retorcido e perigoso.</p>
+      <p>Os <span class="accent">Flinos</span> são criaturas nascidas da Contaminação dentro de Lilin — pequenos seres que carregam o Yvero em forma líquida e se espalham pela floresta como uma praga silenciosa.</p>
+    </div>
+
+    <div class="lore-block">
+      <h3>⛏️ Os Kragnir das Profundezas</h3>
+      <p>Sob as montanhas de Core, os <span class="accent">Kragnir</span> escavaram reinos inteiros na pedra. Forjadores natos, os Kragnir são a raça mais resistente fisicamente — seus corpos são densos e adaptados à pressão das profundezas. Eles são os principais mineradores de cristais de Aura e comerciantes de armas e armaduras de todo o mundo.</p>
+      <p>Os Kragnir veem a Contaminação Yvero como uma doença que pode ser curada com fogo e martelo — uma visão prática que às vezes os coloca em conflito com os Eldryds, que preferem purificação natural.</p>
+    </div>
+
+    <div class="lore-block">
+      <h3>☠️ A Contaminação Yvero</h3>
+      <p>O Yvero é uma energia corruptora que se infiltra lentamente em todos os seres vivos. Ela progride em <span class="accent">cinco fases</span>: começa com um simples Cansaço inexplicável, evolui para Deterioração física, depois Mutação visível, seguida de Dominação mental, até a terrível Transformação Total — quando o ser original deixa de existir e se torna algo completamente novo e monstruoso.</p>
+      <p>A <span class="accent">Fase Pulpa</span> é um estado intermediário raro onde o corpo da vítima se dissolve parcialmente antes de se reconstruir na forma corrompida. Os Poços de Maldição são a principal fonte de Contaminação, e os Flinos são seus mensageiros silenciosos pelas florestas de Lilin.</p>
+    </div>
+
+    <div class="lore-block">
+      <h3>🧠 Sanidade e Afinidade Mágica</h3>
+      <p>Todo ser em Nuvolish possui uma <span class="accent">Sanidade</span> que começa em 10 e pode ser corroída por horrores, contaminação e trauma. A sanidade se divide em cinco estágios: Estável (8-10), Abalo Emocional (5-7), Ruptura (3-4), Colapso (1-2) e a temida Quebra Mental (0) — ponto sem retorno.</p>
+      <p>A <span class="accent">Afinidade Mágica</span> é determinada pelo destino: ao rolar 1d100, apenas aqueles que tiram mais de 40 possuem o dom de manipular Mana. Os demais dependem exclusivamente de Aura e Prana — o que não os torna menos perigosos, apenas diferentes.</p>
+    </div>
+  </section>
+
+  <!-- ══════ MAPA ══════ -->
+  <section class="section" id="sec-mapa">
+    <h2 class="section-title">Mapa de Core</h2>
+    <p class="section-subtitle">Toque nas regiões para explorar</p>
+    <div class="section-divider"></div>
+
+    <div class="map-container" id="worldMap">
+      <!-- Regiões posicionadas no mapa -->
+      <div class="map-region" style="top:8%;left:35%;width:30%" data-region="hysteria">
+        ☁️ Cidades de Hystéria
+      </div>
+      <div class="map-region" style="top:35%;left:10%;width:25%" data-region="lilin">
+        🌿 Floresta de Lilin
+      </div>
+      <div class="map-region" style="top:35%;left:60%;width:25%" data-region="kragnir">
+        ⛏️ Montanhas Kragnir
+      </div>
+      <div class="map-region" style="top:65%;left:25%;width:20%" data-region="pocos">
+        ☠️ Poços de Maldição
+      </div>
+      <div class="map-region" style="top:65%;left:55%;width:22%" data-region="caos">
+        🌑 Floresta do Caos
+      </div>
+      <div class="map-region" style="top:50%;left:38%;width:18%" data-region="planicies">
+        🏔️ Planícies de Core
+      </div>
+
+      <!-- Detalhes das cidades flutuantes -->
+      <svg viewBox="0 0 1000 625" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;opacity:0.15">
+        <!-- Linhas de conexão entre regiões -->
+        <line x1="500" y1="100" x2="225" y2="280" stroke="#c9a84c" stroke-width="1" stroke-dasharray="6,4"/>
+        <line x1="500" y1="100" x2="725" y2="280" stroke="#c9a84c" stroke-width="1" stroke-dasharray="6,4"/>
+        <line x1="225" y1="280" x2="475" y2="380" stroke="#2ecc71" stroke-width="1" stroke-dasharray="6,4"/>
+        <line x1="725" y1="280" x2="475" y2="380" stroke="#e67e22" stroke-width="1" stroke-dasharray="6,4"/>
+        <line x1="350" y1="480" x2="225" y2="280" stroke="#8e44ad" stroke-width="1" stroke-dasharray="6,4"/>
+        <line x1="660" y1="480" x2="725" y2="280" stroke="#8e44ad" stroke-width="1" stroke-dasharray="6,4"/>
+        <!-- Estrelas decorativas -->
+        <circle cx="100" cy="50" r="1.5" fill="#c9a84c" opacity="0.6"/>
+        <circle cx="900" cy="80" r="1" fill="#c9a84c" opacity="0.4"/>
+        <circle cx="50" cy="300" r="1.5" fill="#c9a84c" opacity="0.5"/>
+        <circle cx="950" cy="500" r="1" fill="#c9a84c" opacity="0.3"/>
+        <circle cx="800" cy="150" r="1.5" fill="#c9a84c" opacity="0.5"/>
+        <circle cx="150" cy="550" r="1" fill="#c9a84c" opacity="0.4"/>
+      </svg>
+
+      <div class="map-tooltip" id="mapTooltip"></div>
+    </div>
+  </section>
+
+  <!-- ══════ MESAS ══════ -->
+  <section class="section" id="sec-mesas">
+    <h2 class="section-title">Mesas de Jogo</h2>
+    <p class="section-subtitle">Crie sua mesa, gere um código e convide seus jogadores</p>
+    <div class="section-divider"></div>
+
+    <!-- Lista de mesas ou criar -->
+    <div id="mesasList">
+      <div style="display:flex;gap:12px;margin-bottom:24px;flex-wrap:wrap">
+        <button class="btn btn-gold" onclick="App.mesas.openCreate()">+ Nova Mesa</button>
+        <div style="flex:1;min-width:200px">
+          <input type="text" id="mesaJoinCode" placeholder="Código da mesa para entrar..." 
+                 style="width:100%;padding:10px 14px;background:var(--bg-input);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-family:var(--font-mono);font-size:14px;letter-spacing:2px;text-transform:uppercase">
+        </div>
+        <button class="btn btn-outline" onclick="App.mesas.join()">Entrar</button>
+      </div>
+      <div class="card-grid" id="mesasGrid"></div>
+    </div>
+
+    <!-- Mesa ativa (quando entra numa) -->
+    <div id="mesaActive" style="display:none">
+      <div class="mesa-header">
+        <div>
+          <h3 id="mesaActiveName" style="font-family:var(--font-display);font-size:24px;color:var(--gold)"></h3>
+          <span class="mesa-code" id="mesaActiveCode" onclick="App.mesas.copyCode()" title="Clique para copiar"></span>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-sm btn-outline" onclick="App.mesas.back()">← Voltar</button>
+          <button class="btn btn-sm btn-danger" onclick="App.mesas.deleteCurrent()">Excluir</button>
+        </div>
+      </div>
+
+      <div class="mesa-tabs">
+        <button class="mesa-tab active" data-mesa-tab="jogadores">Jogadores</button>
+        <button class="mesa-tab" data-mesa-tab="monstros">Monstros</button>
+        <button class="mesa-tab" data-mesa-tab="combate">Combate</button>
+        <button class="mesa-tab" data-mesa-tab="diario">Diário</button>
+      </div>
+
+      <div id="mesaTabContent">
+        <!-- Preenchido pelo JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════ FICHAS ══════ -->
+  <section class="section" id="sec-fichas">
+    <h2 class="section-title">Fichas de Personagem</h2>
+    <p class="section-subtitle">Crie e gerencie fichas completas do sistema Nuvolish</p>
+    <div class="section-divider"></div>
+
+    <div style="display:flex;gap:12px;margin-bottom:24px">
+      <button class="btn btn-gold" onclick="App.fichas.openCreate()">+ Nova Ficha</button>
+    </div>
+
+    <!-- Lista de fichas salvas -->
+    <div class="card-grid" id="fichasGrid"></div>
+
+    <!-- Ficha ativa (editor) -->
+    <div id="fichaEditor" style="display:none">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px">
+        <h3 id="fichaEditorName" style="font-family:var(--font-display);font-size:24px;color:var(--gold)"></h3>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-sm btn-gold" onclick="App.fichas.save()">💾 Salvar</button>
+          <button class="btn btn-sm btn-outline" onclick="App.fichas.closeEditor()">← Voltar</button>
+        </div>
+      </div>
+
+      <div class="sheet" id="fichaSheet">
+        <!-- INFO BÁSICA -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Informações</span>
+            <span class="tag tag-gold" id="fichaRaceTag">—</span>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Nome</label>
+              <input type="text" id="f-nome" placeholder="Nome do personagem">
+            </div>
+            <div class="form-group">
+              <label>Classe</label>
+              <input type="text" id="f-classe" placeholder="Classe">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Raça</label>
+              <select id="f-raca" onchange="App.fichas.onRaceChange()">
+                <option value="">Selecione...</option>
+                <option value="Nuvolian">Nuvolian</option>
+                <option value="Eldryd da Floresta">Eldryd da Floresta</option>
+                <option value="Eldryd do Caos">Eldryd do Caos</option>
+                <option value="Kragnir">Kragnir</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Nível</label>
+              <input type="number" id="f-nivel" value="1" min="1" max="20">
+            </div>
+            <div class="form-group">
+              <label>Desloc. (Zonas)</label>
+              <input type="number" id="f-deslocamento" value="1" min="0" max="10">
+            </div>
+          </div>
+        </div>
+
+        <!-- ATRIBUTOS -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Atributos</span>
+            <span class="card-meta">1–30 | 6d20</span>
+          </div>
+          <div class="attr-grid" id="attrGrid">
+            <!-- Gerado pelo JS -->
+          </div>
+          <div style="text-align:center;margin-top:12px">
+            <button class="btn btn-sm btn-outline" onclick="App.fichas.rollAttributes()">🎲 Rolar 6d20</button>
+          </div>
+        </div>
+
+        <!-- ENERGIAS -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Energias</span>
+          </div>
+          <div class="energy-bars" id="energyBars">
+            <!-- HP -->
+            <div class="energy-bar">
+              <span class="energy-label">HP</span>
+              <div class="energy-track"><div class="energy-fill hp" id="hpFill"></div></div>
+              <span class="energy-text">
+                <input type="number" id="f-hp-atual" min="0" style="width:40px;background:transparent;border:none;color:var(--text);font-family:var(--font-mono);font-size:13px;text-align:right" onchange="App.fichas.updateEnergy()">
+                / <input type="number" id="f-hp-max" min="1" style="width:40px;background:transparent;border:none;color:var(--text-muted);font-family:var(--font-mono);font-size:13px" onchange="App.fichas.updateEnergy()">
+              </span>
+            </div>
+            <!-- Aura -->
+            <div class="energy-bar">
+              <span class="energy-label">Aura</span>
+              <div class="energy-track"><div class="energy-fill aura" id="auraFill"></div></div>
+              <span class="energy-text">
+                <input type="number" id="f-aura-atual" min="0" style="width:40px;background:transparent;border:none;color:var(--text);font-family:var(--font-mono);font-size:13px;text-align:right" onchange="App.fichas.updateEnergy()">
+                / <span id="f-aura-max-display">0</span>
+              </span>
+            </div>
+            <!-- Mana -->
+            <div class="energy-bar">
+              <span class="energy-label">Mana</span>
+              <div class="energy-track"><div class="energy-fill mana" id="manaFill"></div></div>
+              <span class="energy-text">
+                <input type="number" id="f-mana-atual" min="0" style="width:40px;background:transparent;border:none;color:var(--text);font-family:var(--font-mono);font-size:13px;text-align:right" onchange="App.fichas.updateEnergy()">
+                / <input type="number" id="f-mana-max" min="0" style="width:40px;background:transparent;border:none;color:var(--text-muted);font-family:var(--font-mono);font-size:13px" onchange="App.fichas.updateEnergy()">
+              </span>
+            </div>
+            <!-- Prana -->
+            <div class="energy-bar">
+              <span class="energy-label">Prana</span>
+              <div class="energy-track"><div class="energy-fill prana" id="pranaFill"></div></div>
+              <span class="energy-text">
+                <input type="number" id="f-prana-atual" min="0" style="width:40px;background:transparent;border:none;color:var(--text);font-family:var(--font-mono);font-size:13px;text-align:right" onchange="App.fichas.updateEnergy()">
+                / <input type="number" id="f-prana-max" min="0" style="width:40px;background:transparent;border:none;color:var(--text-muted);font-family:var(--font-mono);font-size:13px" onchange="App.fichas.updateEnergy()">
+              </span>
+            </div>
+          </div>
+          <!-- Afinidade Mágica -->
+          <div style="margin-top:16px;display:flex;align-items:center;gap:12px">
+            <label style="font-family:var(--font-display);font-size:12px;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted)">Afinidade Mágica</label>
+            <span id="f-afinidade-status" class="tag">Não testado</span>
+            <button class="btn btn-sm btn-outline" onclick="App.fichas.rollAfinidade()">🎲 Rolar 1d100</button>
+          </div>
+        </div>
+
+        <!-- SANIDADE -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Sanidade</span>
+            <span class="card-meta" id="sanidadeLabel">Estável</span>
+          </div>
+          <div class="sanity-track" id="sanityTrack">
+            <!-- 10 pips gerados pelo JS -->
+          </div>
+          <div class="sanity-label" id="sanidadeDesc">10/10 — Mente completamente estável</div>
+        </div>
+
+        <!-- CONTAMINAÇÃO YVERO -->
+        <div class="card sheet-full">
+          <div class="card-header">
+            <span class="card-title">☠️ Contaminação Yvero</span>
+            <span class="card-meta" id="yveroLabel">Limpo</span>
+          </div>
+          <div class="yvero-track" id="yveroTrack">
+            <div class="yvero-phase active" data-fase="0" onclick="App.fichas.setYvero(0)">Limpo</div>
+            <div class="yvero-phase" data-fase="1" onclick="App.fichas.setYvero(1)">Cansaço</div>
+            <div class="yvero-phase" data-fase="2" onclick="App.fichas.setYvero(2)">Deterioração</div>
+            <div class="yvero-phase" data-fase="3" onclick="App.fichas.setYvero(3)">Mutação</div>
+            <div class="yvero-phase" data-fase="4" onclick="App.fichas.setYvero(4)">Dominação</div>
+            <div class="yvero-phase" data-fase="5" onclick="App.fichas.setYvero(5)">Transformação</div>
+          </div>
+          <p id="yveroDesc" style="font-size:14px;color:var(--text-dim);margin-top:12px;font-style:italic"></p>
+        </div>
+
+        <!-- MOEDAS -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">💰 Moedas</span>
+          </div>
+          <div class="coins-row">
+            <div class="coin">
+              <div class="coin-icon cobre">Pc</div>
+              <input type="number" id="f-moeda-cobre" value="0" min="0" style="width:60px;background:transparent;border:1px dashed var(--border);border-radius:4px;color:var(--text);padding:4px;font-family:var(--font-mono);text-align:center">
+            </div>
+            <div class="coin">
+              <div class="coin-icon prata">Pp</div>
+              <input type="number" id="f-moeda-prata" value="0" min="0" style="width:60px;background:transparent;border:1px dashed var(--border);border-radius:4px;color:var(--text);padding:4px;font-family:var(--font-mono);text-align:center">
+            </div>
+            <div class="coin">
+              <div class="coin-icon ouro">Po</div>
+              <input type="number" id="f-moeda-ouro" value="0" min="0" style="width:60px;background:transparent;border:1px dashed var(--border);border-radius:4px;color:var(--text);padding:4px;font-family:var(--font-mono);text-align:center">
+            </div>
+            <div class="coin">
+              <div class="coin-icon platina">Pl</div>
+              <input type="number" id="f-moeda-platina" value="0" min="0" style="width:60px;background:transparent;border:1px dashed var(--border);border-radius:4px;color:var(--text);padding:4px;font-family:var(--font-mono);text-align:center">
+            </div>
+          </div>
+        </div>
+
+        <!-- PERÍCIAS -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Perícias</span>
+            <span class="card-meta">19 Perícias</span>
+          </div>
+          <div class="skills-grid" id="skillsGrid">
+            <!-- Gerado pelo JS -->
+          </div>
+        </div>
+
+        <!-- ATAQUES / HABILIDADES -->
+        <div class="card sheet-full">
+          <div class="card-header">
+            <span class="card-title">⚔️ Ataques & Habilidades</span>
+            <button class="btn btn-sm btn-outline" onclick="App.fichas.addAtaque()">+ Adicionar</button>
+          </div>
+          <div id="ataquesContainer">
+            <!-- Gerado pelo JS -->
+          </div>
+        </div>
+
+        <!-- INVENTÁRIO -->
+        <div class="card sheet-full">
+          <div class="card-header">
+            <span class="card-title">🎒 Inventário</span>
+            <button class="btn btn-sm btn-outline" onclick="App.fichas.addItem()">+ Item</button>
+          </div>
+          <table class="inv-table">
+            <thead>
+              <tr>
+                <th>Item</th>
+                <th>Qtd</th>
+                <th>Peso</th>
+                <th>Notas</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="inventarioBody">
+            </tbody>
+          </table>
+        </div>
+
+        <!-- NOTAS -->
+        <div class="card sheet-full">
+          <div class="card-header">
+            <span class="card-title">📝 Notas</span>
+          </div>
+          <textarea id="f-notas" rows="6" placeholder="Anotações livres do personagem..." 
+                    style="width:100%;background:var(--bg-input);border:1px solid var(--border);border-radius:var(--radius);padding:12px;color:var(--text);font-family:var(--font-body);font-size:15px;resize:vertical"></textarea>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════ BESTIÁRIO ══════ -->
+  <section class="section" id="sec-bestiario">
+    <h2 class="section-title">Bestiário</h2>
+    <p class="section-subtitle">Catálogo de criaturas e monstros de Nuvolish</p>
+    <div class="section-divider"></div>
+
+    <div style="display:flex;gap:12px;margin-bottom:24px">
+      <button class="btn btn-gold" onclick="App.bestiario.openCreate()">+ Novo Monstro</button>
+    </div>
+
+    <div class="card-grid" id="bestiarioGrid"></div>
+  </section>
+
+  <!-- ══════ SESSÕES ══════ -->
+  <section class="section" id="sec-sessoes">
+    <h2 class="section-title">Sessões & Diário</h2>
+    <p class="section-subtitle">Registre as aventuras da mesa</p>
+    <div class="section-divider"></div>
+
+    <div style="margin-bottom:24px">
+      <label style="font-family:var(--font-display);font-size:12px;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);display:block;margin-bottom:6px">Mesa</label>
+      <select id="sessaoMesaSelect" onchange="App.sessoes.loadForMesa()" 
+              style="width:100%;max-width:400px;padding:10px 14px;background:var(--bg-input);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-family:var(--font-body);font-size:15px">
+        <option value="">Selecione uma mesa...</option>
+      </select>
+    </div>
+
+    <div id="sessoesContent" style="display:none">
+      <button class="btn btn-gold btn-sm" onclick="App.sessoes.openCreate()" style="margin-bottom:24px">+ Nova Sessão</button>
+      <div id="sessoesList"></div>
+    </div>
+  </section>
+
+  <!-- ══════ DICE ROLLER (Fixed) ══════ -->
+  <div class="dice-roller">
+    <div class="dice-panel" id="dicePanel">
+      <div style="font-family:var(--font-display);font-size:14px;color:var(--gold);letter-spacing:1px;text-transform:uppercase;margin-bottom:12px">Rolador de Dados</div>
+      <div class="dice-grid">
+        <div class="dice-type" data-dice="4">d4</div>
+        <div class="dice-type" data-dice="6">d6</div>
+        <div class="dice-type" data-dice="8">d8</div>
+        <div class="dice-type" data-dice="10">d10</div>
+        <div class="dice-type" data-dice="12">d12</div>
+        <div class="dice-type" data-dice="20">d20</div>
+        <div class="dice-type" data-dice="100">d100</div>
+        <div class="dice-type" data-dice="custom">NdX</div>
+      </div>
+      <div style="display:flex;gap:8px;margin-bottom:12px;align-items:center" id="diceCustom" class="hidden">
+        <input type="number" id="diceQty" value="1" min="1" max="20" style="width:50px;padding:6px;background:var(--bg-input);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-family:var(--font-mono);text-align:center">
+        <span style="color:var(--text-dim)">d</span>
+        <input type="number" id="diceSides" value="6" min="2" max="1000" style="width:60px;padding:6px;background:var(--bg-input);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-family:var(--font-mono);text-align:center">
+        <button class="btn btn-sm btn-gold" onclick="App.dice.rollCustom()">Rolar</button>
+      </div>
+      <div class="dice-result" id="diceResult">—</div>
+      <div style="font-family:var(--font-mono);font-size:11px;color:var(--text-dim);text-align:center;margin-top:4px" id="diceDetail"></div>
+      <div class="dice-history" id="diceHistory"></div>
+    </div>
+    <button class="dice-btn-float" id="diceToggle" title="Rolador de Dados">🎲</button>
+  </div>
+
+  <!-- ══════ MODAL GENÉRICO ══════ -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+      <div class="modal-header">
+        <span class="modal-title" id="modalTitle">Modal</span>
+        <button class="modal-close" onclick="App.modal.close()">&times;</button>
+      </div>
+      <div class="modal-body" id="modalBody"></div>
+      <div class="modal-footer" id="modalFooter"></div>
+    </div>
+  </div>
+
+  <!-- ══════ TOAST CONTAINER ══════ -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script src="/js/app.js"></script>
+</body>
+</html>
