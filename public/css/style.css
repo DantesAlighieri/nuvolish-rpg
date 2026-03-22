@@ -500,6 +500,7 @@ input[type="number"] {
 
 .attr-input {
   width: 60px !important;
+  height: 40px !important;
   text-align: center;
   font-family: var(--font-mono) !important;
   font-size: 24px !important;
@@ -507,6 +508,9 @@ input[type="number"] {
   border: 1px dashed var(--border) !important;
   color: var(--gold-light) !important;
   padding: 4px !important;
+  line-height: 1 !important;
+  display: block;
+  margin: 0 auto;
 }
 
 /* Energias */
@@ -556,9 +560,26 @@ input[type="number"] {
 .energy-text {
   font-family: var(--font-mono);
   font-size: 12px;
-  width: 80px;
+  width: 90px;
   text-align: center;
   color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+}
+
+.energy-text input {
+  width: 32px !important;
+  height: 24px !important;
+  background: transparent !important;
+  border: none !important;
+  color: var(--text) !important;
+  font-family: var(--font-mono) !important;
+  font-size: 13px !important;
+  text-align: center !important;
+  padding: 0 !important;
+  line-height: 1 !important;
 }
 
 /* Sanidade */
@@ -1246,12 +1267,20 @@ input[type="number"] {
   .nav-toggle { display: block; }
   .nav-status { display: none; }
   .sheet { grid-template-columns: 1fr; }
-  .attr-grid { grid-template-columns: repeat(2, 1fr); }
+  .attr-grid { grid-template-columns: repeat(3, 1fr); }
   .monster-stats { grid-template-columns: repeat(3, 1fr); }
   .hero h1 { font-size: 42px; }
   .section { padding: 70px 16px 40px; }
   .dice-panel { width: calc(100vw - 48px); right: -12px; }
   .modal { max-height: 90vh; }
+  .yvero-track { flex-wrap: wrap; }
+  .yvero-phase { font-size: 9px; padding: 6px 4px; }
+  .mesa-header { flex-direction: column; align-items: flex-start; }
+  .map-container { aspect-ratio: 4/5; }
+  .map-region { font-size: 11px; padding: 6px 10px; }
+  .energy-bar { flex-wrap: nowrap; }
+  .form-row { flex-direction: column; }
+  .form-row .form-group { min-width: 100%; }
 }
 
 @media (max-width: 480px) {
@@ -1259,6 +1288,14 @@ input[type="number"] {
   .coins-row { flex-direction: column; gap: 8px; }
   .hero-actions { flex-direction: column; }
   .card-grid { grid-template-columns: 1fr; }
+  .hero h1 { font-size: 32px; letter-spacing: 2px; }
+  .section-title { font-size: 26px; }
+  .skills-grid { grid-template-columns: 1fr; }
+  .dice-grid { grid-template-columns: repeat(4, 1fr); }
+  .yvero-track { gap: 4px; }
+  .yvero-phase { flex: 0 0 calc(33% - 4px); }
+  .map-container { aspect-ratio: 3/4; }
+}
 }
 
 /* ── MASTER MODE ── */
