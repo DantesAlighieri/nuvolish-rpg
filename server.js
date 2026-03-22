@@ -414,6 +414,26 @@ app.post('/api/diario', needsDB, async (req, res) => {
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
+// ── Reset database (apagar tudo e recriar) ──
+app.get('/api/admin/reset-db', needsDB, async (req, res) => {
+  try {
+    // Dropar tabelas na ordem certa (foreign keys)
+    await db.query('SET FOREIGN_KEY_CHECKS = 0');
+    await db.query('DROP TABLE IF EXISTS diario');
+    await db.query('DROP TABLE IF EXISTS sessoes');
+    await db.query('DROP TABLE IF EXISTS ataques');
+    await db.query('DROP TABLE IF EXISTS fichas');
+    await db.query('DROP TABLE IF EXISTS mesas');
+    await db.query('DROP TABLE IF EXISTS usuarios');
+    await db.query('SET FOREIGN_KEY_CHECKS = 1');
+    
+    // Recriar tudo
+    await createTables();
+    
+    res.json({ success: true, message: 'Banco resetado! Todas as tabelas recriadas.' });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
 // ── Health check ──
 app.get('/api/health', async (req, res) => {
   let dbStatus = 'offline';
