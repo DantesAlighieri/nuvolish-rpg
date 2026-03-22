@@ -503,6 +503,14 @@ const App = (() => {
   // NAVEGAÇÃO SPA
   // ══════════════════════════════════════
   function navigate(section) {
+    // Seções que precisam de login
+    const protectedSections = ['mesas', 'fichas', 'bestiario', 'sessoes'];
+    if (protectedSections.includes(section) && !currentUser) {
+      toast('Crie uma conta ou faça login para acessar!', 'warning');
+      auth.showRegister();
+      return;
+    }
+
     // Esconder todas as seções
     document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
     // Mostrar a seção alvo
@@ -785,6 +793,7 @@ const App = (() => {
     },
 
     openCreate(mesaId = null) {
+      if (!auth.requireLogin()) return;
       modal.open('Nova Ficha', `
         <div class="form-group">
           <label>Nome do Personagem</label>
@@ -1283,6 +1292,15 @@ const App = (() => {
       document.getElementById('fichaEditorName').textContent = data.nome;
     },
 
+    async deleteCurrent() {
+      if (!currentFicha) return;
+      const nome = currentFichaData?.nome || 'esta ficha';
+      if (!confirm('Excluir "' + nome + '"? Essa ação não pode ser desfeita!')) return;
+      await api.deleteFicha(currentFicha);
+      toast('Ficha excluída', 'warning');
+      this.closeEditor();
+    },
+
     closeEditor() {
       currentFicha = null;
       currentFichaData = null;
@@ -1313,6 +1331,7 @@ const App = (() => {
     },
 
     openCreate(mesaId = null) {
+      if (!auth.requireLogin()) return;
       modal.open('Novo Monstro', `
         <div class="form-group"><label>Nome</label><input type="text" id="mon-nome" placeholder="Nome da criatura"></div>
         <div class="form-row">
